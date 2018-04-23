@@ -1,0 +1,51 @@
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand*\circled[2][fill=white!0]{\tikz[]{
+            \node[thick,shape=circle,minimum size=0.6cm,draw,inner sep=1pt,#1] (char) {#2};}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%            
+
+
+\begin{tikzpicture}[>=triangle 60]
+
+% rectangle
+
+%\draw[rounded corners=15pt] (0,0) rectangle (6,1);
+
+\coordinate (p2) at (-5, 0) {};
+\coordinate (p3) at (0,-3) {};
+\coordinate (p4) at (5, 0) {};
+\coordinate (p5) at (0, 2.1) {};
+\coordinate (p6) at (0, 5) {};
+
+\draw[->,thick] (p2) -- (-2.8,0) node [near start, above,yshift = 0.4cm] {\Large From Condenser};
+\draw[->,thick] (p3) -- (0, -0.8) node [midway, right,xshift = 1cm,yshift = 0.4cm] {\Large From Heat User};
+\draw[->,thick] (p4) -- (2.8,0);
+%\draw[->,thick] (0,0)--(p5) ;
+\draw[->,thick] (0,0)--(p6) node [near end, right,xshift = 0.2cm,yshift = 0.4cm] {\Large To LP economizer};
+
+%pump 
+\draw[] (0,0)--(p6) node[midway, thick,shape=circle,minimum size=0.8cm,draw,fill=white] {};
+\path (0,0)--(p6) node[midway, thick,regular polygon, regular polygon sides=3,rotate=0,minimum size=0.75cm,draw,fill=white] {};
+%%%%%%%%%%%%    
+
+
+% \draw[->,thick] (0,0)--(p15xx) ;
+% \draw[->,thick] (p14)--(-3, 0.75) node [near start, left,xshift=-0.1cm] {\Large From HPT};
+% \draw[->,thick] (-1.5,0)--(p15x)  node [near end, right,xshift=0.1cm] {\Large To LPT};
+% \draw[->,thick] (p9)--(3, 0.75)  node [near start, right,xshift=0.1cm] {\Large From HP ECO};;
+
+%\draw[->,thick] (0,0)--(p17) node [midway, right,xshift=0.1cm,yshift=0.4cm] {\Large To Heat User};;
+%\draw[->,thick] (p10x)--(2.5,0) ;
+
+ \node[black,left] at (p2) {\Large \circled[fill=green!50]{2}};
+ \node[black,right] at (p3) {\Large \circled[fill=green!50]{3}};
+ \node[black,right] at (p4) {\Large \circled[fill=green!50]{4}};
+ \path (0,0)--(p5) node[left, midway, thick,yshift = 0.1cm] {\Large \circled{5}};
+%\node[black,left,xshift=-0.3cm] at (p5) {\Large \circled{5}};
+ \node[black,right] at (p6) {\Large \circled{6}};
+
+ \node at (0,0) [thick,draw, rounded rectangle,inner sep=10pt,fill=cyan!50] {\huge \quad Header (5)\quad\quad};
+ 
+\end{tikzpicture}

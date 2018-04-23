@@ -1,0 +1,111 @@
+\documentclass{standalone}
+
+\usepackage[utf8]{inputenc}
+\usepackage{structuralanalysis}
+\usepackage{3dstructuralanalysis}
+\usetikzlibrary{calc,3d}
+
+\usepgflibrary{fpu}%----- this
+
+\begin{document}
+
+\newdimen\XCoord
+\newdimen\YCoord
+\newcommand*{\ExtractCoordinate}[1]{\path (#1); \pgfgetlastxy{\XCoord}{\YCoord};}%
+
+\setcoords{-28}{20}[1][-1][1]
+%\setaxis{2} 
+
+\begin{tikzpicture}[coords]
+
+	\def \mm {$\,$mm};
+	
+	\def \torque {{0,	0,	-0.24142,	 -0.2414,	0.2414,	0.2414,	0,	0}}
+	
+	%scaling of M
+	\pgfmathsetmacro{\h}{4}
+	
+	\pgfmathsetmacro{\k}{0.8}
+
+	\pgfmathsetmacro{\b}{1015/1}
+	\pgfmathsetmacro{\s}{746.5/1}
+	\pgfmathsetmacro{\bs}{\b-\s}
+	\pgfmathsetmacro{\yi}{396.5/1}
+	\pgfmathsetmacro{\R}{430/1}
+	
+	\pgfmathsetmacro{\ab}{\b-\s}
+	\pgfmathsetmacro{\bc}{\b-\s+\yi}
+	\pgfmathsetmacro{\cd}{\b+\s}
+	\pgfmathsetmacro{\de}{\b-\s}
+	
+
+	%\dscaling{0.005*100};
+	
+	\dpoint{a}{0}{0}{0};
+	\dpoint{b}{0.2685*\h}{0}{0};
+	\dpoint{c}{0.665*\h}{0}{0};
+	\dpoint{d}{1.7615*\h}{0}{0};
+	\dpoint{e}{2.030*\h}{0}{0};
+	
+	\dpoint{b1}{0.2685*\h}{0}{-0.430*\h};
+	\dpoint{b2}{0.2685*\h}{0}{0};
+	
+	\dpoint{d1}{1.7615*\h}{0}{-0.430*\h}{0};
+	\dpoint{d2}{1.7615*\h}{0}{0};
+	
+	
+	%\daxis{1}{a}; 
+	
+% 	\point{a}{0}{0};
+% 	\point{b}{\bs}{0};
+% 	\point{c}{\bs+\yi}{0};
+% 	\point{d}{\b + \s}{0};
+% 	\point{e}{\b+\b}{0};
+	
+	
+	\begin{scope}[canvas is zy plane at x=0]
+			%\draw[even odd rule, pattern = north east lines]
+			\draw[even odd rule,  fill=brown]
+											(a) circle (0.7)
+					   						(a) circle (1.15);
+			\draw[even odd rule,  pattern = north east lines]
+											(a) circle (0.7)
+					   						(a) circle (1.15);
+			\draw (-1.15,0) -- (1.15,0) (0,-1.15) -- (0,1.15);
+	\end{scope}
+	
+	\dload{4}{a}[90][0][2][0][$M_t$][xshift = 8,yshift=-3]; 
+	%\dnotation{1}{a}{$M_t$}[right, xshift=2]; 
+	
+	\dload{2}{a}[-90][0][1.9][0][$N$][xshift = -8,yshift=3]; 
+	
+	\dload{4}{a}[0][0][2][0][$M_{xy}$][xshift = 0,yshift=8]; 
+	
+	\dload{4}{a}[-90][90][2][0][$M_{zy}$][xshift=12,yshift=3]; 
+	
+% 	
+% 	\dbeam{1}{a}{b};
+% 	\dbeam{1}{b}{c};
+% 	\dbeam{1}{c}{d};
+% 	\dbeam{1}{d}{e};
+% 	
+% 	\beam{2}{b1}{b2};
+% 	\beam{2}{d1}{d2};
+% 	
+% 	\ddimensioning{xy}{a}{b}{2.8}[\ab];
+%  	\ddimensioning{xy}{b}{c}{2.8}[\bc \mm];
+%  	\ddimensioning{xy}{c}{d}{2.8}[\cd \mm];
+%  	\ddimensioning{xy}{d}{e}{2.8}[\de];
+%  	\ddimensioning{zx}{d1}{d}{9}[\R \mm];
+% 	
+% 	\notation{1}{a}{$0$}[left];
+% 	\notation{1}{b}{$1$}[above left];
+% 	\notation{1}{c}{$2$}[above right];
+% 	\notation{1}{d}{$3$}[above left];
+% 	\notation{1}{e}{$4$}[above left]
+	
+	%\notation{1}{a}{$P_1$}[above = 1.3];
+	
+	
+\end{tikzpicture}
+\end{document}

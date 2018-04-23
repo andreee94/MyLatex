@@ -1,0 +1,134 @@
+
+\usetikzlibrary{decorations.markings}
+
+\begin{tikzpicture}[>=triangle 60]
+
+\tikzset{->-/.style={decoration={
+  markings,
+  mark=at position #1 with {\arrow{>}}},postaction={decorate}}}
+  
+\tikzset{-<-/.style={decoration={
+  markings,
+  mark=at position #1 with {\arrow{<}}},postaction={decorate}}}
+
+\begin{axis}[
+    scale only axis,
+    grid=major,
+    width=15cm, 
+    height=7cm,
+    axis lines=middle,
+    inner axis line style={->},
+    ylabel={Temperature T ($^{\circ}C$)},
+    xlabel={Heat transfer $\dot{Q} \ (MW)$},
+    ylabel near ticks,
+    xlabel near ticks,
+    ytick={100,125,...,325},
+    xtick={0,3,...,60},
+    ymin=100,
+    ymax=325,
+    xmin=0,
+    xmax=60
+]
+
+%%%%%%%
+ % vertical lines
+ \addplot [dashed,thick] coordinates {
+(54.00220630809749,0) 
+(54.00220630809749,500)
+};
+ \addplot [dashed,thick] coordinates {
+(2.279180775994940,0) 
+(2.279180775994940,500)
+};
+ \addplot [dashed,thick] coordinates {
+(2.279180775994940 + 5.076412896541163,0) 
+(2.279180775994940 + 5.076412896541163,500)
+};
+%%%%%%%
+	
+%%%%%%%
+% 8-9
+\addplot[-<-=.5,color=red,thick] coordinates{
+	(0, 2.595379036469097e+02)
+	(2.279180775994940, 154.7582)
+};
+\addplot[dotted,mark = *,red] coordinates {
+	(0, 2.595379036469097e+02)
+	(2.279180775994940, 154.7582)
+        };
+ %%%%%%%
+ 
+%%%%%%%
+% 7-8
+\addplot[-<-=.5,color=red,thick] coordinates {
+	(2.279180775994940 + 5.076412896541163 , 154.7582)
+	(54.00220630809749, 154.7582)
+        };
+\addplot[dotted,mark = *,red] coordinates {
+	(2.279180775994940 + 5.076412896541163 , 154.7582)
+	(54.00220630809749, 154.7582)
+        };
+ %%%%%%%
+ 
+%%%%%%%
+% 10-11x
+\addplot[-<-=.5,color=black!50!green,thick] coordinates {
+	(2.279180775994940 , 2.745379036469097e+02)
+	(2.279180775994940 + 5.076412896541163, 1.560502635799714e+02)
+        };
+\addplot[dotted,mark = *,black!50!green] coordinates {
+	(2.279180775994940 , 2.745379036469097e+02)
+	(2.279180775994940 + 5.076412896541163, 1.560502635799714e+02)
+        };
+ %%%%%%%
+ 
+%%%%%%%
+% flue gases
+% plot blue
+\addplot[->-=0.5,color=blue,thick] coordinates {
+	(0, 284.53790364691)
+	(54.00220630809749, 1.647581866080595e+02)
+        };
+\addplot[dotted,mark = *,blue] coordinates {
+	(0, 284.53790364691)
+	(54.00220630809749, 1.647581866080595e+02)
+        };
+%%%%%%%
+
+ %%%%%%%
+% 7x-7
+\addplot[color=red,thick] coordinates {
+	(54.00220630809749, 154.7582)
+	(54.00220630809749, 1.477581866080595e+02)
+        };
+\addplot[dotted,mark = *,red] coordinates {
+	(54.00220630809749, 154.7582)
+	(54.00220630809749, 1.477581866080595e+02)
+        };
+ %%%%%%%
+
+ \pgfplotsset{
+     after end axis/.code={
+         \node[red,fill = white,left,xshift = -0.1cm] at (axis cs: 0, 2.595379036469097e+02) {(9)};
+         \node[red,fill = white,below,yshift = -0.15cm] at (axis cs: 2.279180775994940, 154.7582) {(8)};
+         \node[red,fill = white,below,yshift = -0.15cm] at (axis cs: 2.279180775994940 + 5.076412896541163, 154.7582) {(8)};
+         \node[red,fill = white,right,xshift = 0.15cm] at (axis cs: 54.00220630809749, 154.7582) {(7)};
+         \node[red,fill = white,below,yshift = -0.15cm] at (axis cs: 54.00220630809749, 1.477581866080595e+02) {(7*)};
+         
+         \node[blue,above, fill = white,yshift = 0.1cm] at (axis cs:0, 284.53790364691) {($T_{b}$)};
+         \node[blue,above right, fill = white,yshift = 0.1cm] at (axis cs:54.00220630809749, 1.647581866080595e+02) {($T_c$)};
+         
+         \node[black!50!green,above right, fill = white,yshift = 0.1cm,xshift = 0.1cm] at (axis cs:2.279180775994940 , 2.745379036469097e+02) {(11*)};
+         \node[black!50!green,above right, fill = white,yshift = 0 cm,xshift = 0.05cm] at (axis cs:2.279180775994940 + 5.076412896541163, 1.560502635799714e+02) {(10)};
+         
+         
+         \node[black,fill = white,] at (axis cs:1.25,110) {LP SH};
+         \node[black,fill = white,] at (axis cs:5,315) {Hp Eco};
+         \node[black,fill = white,] at (axis cs:30,125) {LP Evaporator};
+     }
+ }
+
+\end{axis}
+
+
+\end{tikzpicture}

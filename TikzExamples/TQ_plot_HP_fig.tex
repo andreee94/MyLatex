@@ -1,0 +1,103 @@
+
+\usetikzlibrary{decorations.markings}
+
+\begin{tikzpicture}[>=triangle 60]
+
+\tikzset{->-/.style={decoration={
+  markings,
+  mark=at position #1 with {\arrow{>}}},postaction={decorate}}}
+  
+\tikzset{-<-/.style={decoration={
+  markings,
+  mark=at position #1 with {\arrow{<}}},postaction={decorate}}}
+
+\begin{axis}[
+    scale only axis,
+    grid=major,
+    axis lines=middle,
+    inner axis line style={->},
+    ylabel={Temperature T ($^{\circ}C$)},
+    xlabel={Heat transfer $\dot{Q} \ (MW)$},
+    ylabel near ticks,
+    xlabel near ticks,
+    ytick={100,150,...,680},
+    xtick={0,15,...,160},
+    ymin=60,
+    ymax=680,
+    xmin=0,
+    xmax=160
+]
+
+% plot red
+\addplot[-<-=.5,color=red,thick] coordinates {
+	(0, 538)
+	(43.7807504523443, 274.5379036469097)
+        };
+\addplot[-<-=.5,color=red,thick] coordinates {
+	(43.7807504523443, 274.5379036469097)
+	(133.658750292405, 274.5379036469097)
+        };
+
+% plot blue
+\addplot[->-=0.5,color=blue,thick,] coordinates {
+	(0, 581)
+	(133.658750292405, 284.53790364691)
+        };
+
+% dot red
+\addplot[dotted,mark=*,red] coordinates {
+	(0, 538)
+	(43.7807504523443, 274.5379036469097)
+	(133.658750292405, 274.5379036469097)
+        };
+        
+% dot blue
+\addplot[dotted,mark=*,blue] coordinates {
+	(0, 581)
+	(133.658750292405, 284.53790364691)
+        };
+  % vertical left
+ \addplot [dashed,thick] coordinates {
+(43.7807504523443,0) 
+(43.7807504523443,600)
+};
+
+  % vertical right
+\addplot [dashed,thick] coordinates {
+(133.658750292405,0)
+(133.658750292405,600)
+};
+ 
+ %% last part vertical dashed
+\addplot[thick,color=red,thick] coordinates {
+	(133.658750292405, 274.5379036469097)
+	(133.658750292405, 274.5379036469097-20)
+        };
+  % vertical right
+\addplot [dotted,mark=*,red] coordinates {
+	(133.658750292405, 274.5379036469097)
+	(133.658750292405, 274.5379036469097-20)
+};
+
+
+	
+ \pgfplotsset{
+     after end axis/.code={
+         \node[red,below] at (axis cs: 0, 538) {(13)};
+         \node[red, fill = white] at (axis cs:43.7807504523443, 274.5379036469097-35) {(12)};
+         \node[red,below,  fill = white] at (axis cs:133.658750292405+10, 274.5379036469097+25) {(11)};
+         \node[red,below,  fill = white] at (axis cs:133.658750292405, 274.5379036469097-30) {(11*)};
+        
+         \node[blue,right] at (axis cs:0, 581) {($T_{a}$)};
+         \node[blue,above right, fill = white] at (axis cs:133.658750292405-3, 284.53790364691+6) {($T_b$)};
+         
+         
+         \node[black,fill = white] at (axis cs:20, 150) {HP Sh};
+         \node[black,fill = white] at (axis cs:90,150) {HP Evaporator};
+     }
+ }
+
+\end{axis}
+
+
+\end{tikzpicture}

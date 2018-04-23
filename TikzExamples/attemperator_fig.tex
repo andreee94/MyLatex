@@ -1,0 +1,31 @@
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand*\circled[2][fill=white!0]{\tikz[]{
+            \node[thick,shape=circle,minimum size=0.9cm,draw,inner sep=1pt,#1] (char) {#2};}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%            
+
+
+\begin{tikzpicture}[>=triangle 60]
+
+% rectangle
+
+%\draw[rounded corners=15pt] (0,0) rectangle (6,1);
+
+
+\coordinate (p15xx) at (-4.5,0) {};
+\coordinate (p17) at (0,2.5) {};
+\coordinate (p10x) at (4.5,0) {};
+
+\draw[->,thick] (p15xx)--(-2.5,0) ;
+\draw[->,thick] (0,0)--(p17) node [near end, right,xshift=0.1cm] {\Large To Heat User};
+\draw[->,thick] (p10x)--(2.5,0) ;
+
+\node[black,left] at (p15xx) {\Large \circled{15**}};
+\node[black,above] at (p17) {\Large \circled[fill=green!50]{17}};
+\node[black,right] at (p10x) {\Large \circled{10*}};
+
+ \node at (0,0) [thick,draw, rounded rectangle,inner sep=10pt,fill=cyan!50] {\huge Attemperator};
+ 
+\end{tikzpicture}

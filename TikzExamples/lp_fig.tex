@@ -1,0 +1,21 @@
+\usetikzlibrary{decorations.pathmorphing}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{decorations.pathmorphing}
+\usetikzlibrary{arrows}
+\usetikzlibrary{automata}
+\begin{tikzpicture}[>=triangle 60]
+
+\draw[ultra thick] (0,1)--(2,0)--(2,4)--(0,3)--(0,1);
+\draw[ultra thick] (0,1)--(-2,0)--(-2,4)--(0,3)--(0,1);
+
+\node [anchor=center] at (1,2) {\huge $LPT$}; 
+\node [anchor=center] at (-1,2) {\huge $LPT$}; 
+
+\draw[thick,->] (0,5)--(0,3);
+\node [anchor=east] at (0,4) {\huge $4$}; 
+
+\draw[thick,<-] (2,6)--(2,4);
+\draw[thick,->] (-2,4)--(-2,6);
+\draw[thick,->] (-2,6)--(4,6);
+\node [anchor=north] at (3,6) {\huge $5$}; 
+\end{tikzpicture}

@@ -1,0 +1,690 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[margin=0.7in]{geometry}
+\usepackage[latin1]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{cases}
+\usepackage[makeroom]{cancel}
+\usepackage{amsmath,tabu}
+\usepackage[fleqn]{mathtools}
+\usepackage[fleqn]{amsmath}
+\usepackage{bm}
+\usepackage{tikz}
+\usepackage{enumitem}
+\usepackage{wrapfig}
+\usepackage{graphicx}
+\usepackage{siunitx}
+\usepackage{microtype}
+\usepackage{array,tabularx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{import}
+\usepackage{cases}
+\usepackage{graphicx,subfigure}
+\usepackage{myUnitOfMeasure}
+%\usepackage{myThermodynamics}
+\usepackage{myMath}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{xcolor}
+
+
+\title{PROJECT 2: Design of an Hydraulic Cylinder}
+\author{Rossi Andrea 883580}
+\date{}
+
+
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+
+\newcommand{\Fy}[1]{\text{F}_{y_{#1}}}
+
+\newcommand{\diameter}{\oslash}
+
+\newcommand{\todo}{\colorbox{cyan!60}{TODO}}
+
+%\newcommand{\pointdatatable}[5]{
+%\begin{center}
+%\tabulinesep=1.2mm
+%\begin{tabu}{|l|c|c|c|}
+%\hline
+%$ T_{#1} $ & $ p_{#1} $ & $ h_{#1} $ & $ s_{#1} $\\ \hline
+%$ \round{#2} \celsius $ & $ \round{#3} \,bar $ & $ \round{#4} \kjkg $ & $ \round[round-precision=4]{#5} \kjkgk $\\ \hline
+%\end{tabu}
+%\end{center}
+%}
+
+%\newcommand{\Lt}{L_{tubes}}
+%\newcommand{\Lt}[1][\,]{L^{#1}_{\text{tubes}}}
+%
+%\newcommand{\coefA}{\round[round-precision=4]{1.207157069183}}
+%
+%\newcommand{\coefAcoal}{\round[round-precision=4]{1.092675258663658}}
+%
+%\newcommand{\fgs}{\text{FG+S}}
+%
+%
+%\newcommand{\cacooo}{\text{CaCO}_3}
+%
+%\renewcommand{\thesection}{\Alph{section}}
+%\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%
+\begin{document}
+\maketitle
+
+\section{Introduction to the problem}
+
+The report consists in the design of a \emph{single rod double acting hydraulic cylinder} through the comparison between:
+\begin{itemize}
+\item experimental data;
+\item Mariotte's analytical formulation;
+\item simulation with \emph{shell} finite elements;
+\item simulation with \emph{solid} finite elements.
+\end{itemize}
+The simulations are performed with the support of the software Abaqus.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{img/slides/cylinder_drawn.jpg}
+\label{fig:cylinder_drawn}
+\caption{Hydraulic cylinder scheme.}
+\end{figure}
+
+An hydraulic cylinder is an object with the following characteristic sketched in figure \ref{fig:cylinder_drawn}
+\begin{itemize}
+\item allow hydraulic systems to convert fluid pressure and flow into linear mechanical force and motion at the point of operation;
+\item exploit linear motion of a piston, and do not use mechanical gears or levers;
+\item when compared with pneumatic, mechanical or electric systems, hydraulic cylinders can be simpler, more durable, and offer greater power;
+\item available in a wide range of scales to meet a different application needs, as industrial applications (hydraulic presses, cranes, forges, packing machines) and mobile applications (agricultural machines, construction equipment, marine equipment...).
+\end{itemize}
+
+The main characteristics that distinguish hydraulic cylinders are the number of rods and the number of chambers.
+For what that concern the number of rods we can find:
+\begin{itemize}
+\item \textbf{Single rod} hydraulic cylinders;
+\item \textbf{Double rod} hydraulic cylinders.
+\end{itemize}
+Instead for what that concern the number chambers we can find:
+
+%\begin{wrapfigure}[4]{r}{2.5in}
+%\centering
+%\includegraphics[width=2in]{img/slides/single_double_acting.jpg}
+%\end{wrapfigure}
+\noindent
+\begin{minipage}[c]{.6\textwidth}
+\begin{itemize}
+\item \textbf{Single acting}: the cylinder is pressurized for motion in only one direction. Once the work is completed, the oil is de-pressurized and returned to the fluid reservoir. The piston returns to the starting position by an external force such as gravity or a compressed spring;
+\item \textbf{Double acting}: this design uses pressurized hydraulic fluid to extend and retract the piston rod. This requires fluid ports at both ends of the actuator in order for the oil to be directed onto both sides to the piston.
+\end{itemize}
+%
+\end{minipage}
+\begin{minipage}[c]{.4\textwidth}
+\raggedleft
+\includegraphics[scale=0.5]{img/slides/single_double_acting.jpg}
+\end{minipage}
+%
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{img/slides/our_cylinder_drawn.jpg}
+\label{fig:our_cylinder_drawn}
+\end{figure}
+As we have said before our case study is a single rod double acting cylinder as drawn in figure \ref{fig:our_cylinder_drawn} with the following characteristic:
+\begin{itemize}
+\item welded cylinder;
+\item base port is pumping the fluid into the lower chamber;
+\item the circulating fluid is mineral oil;
+\item operating pressure is 80\,bar
+\item maximum pressure is 160\,bar
+\item safety valve: 100\,bar
+\item the rod port is not used;
+\item the cylinder is made of steel S355.
+\end{itemize}
+And the typical dimension are:
+\begin{itemize}
+\item stroke = $10\mm$;
+\item internal diameter = $50\mm$;
+\item wall thickness = $50\mm$;
+\item rod diameter = $25\mm$.
+\end{itemize}
+
+\section{The experimental data acquisition}
+
+To get the stress and the strain from an experiment is necessary to set-up the whole measurement system. 
+We are using 11 biaxial strain gauges that are able to measure the strain in 2 different direction, one at $0\degree$ to get hoop strain and one at $90\degree$ to get the axial strain, both aligned with the principal stresses directions.
+10 of that are placed aligned along a path $90\degree$ shifted respect to that passing through the holes, starting at $6.5\mm$ from the side and with a relative distance of $5\mm$, the $11^\text{th}$ instead is on the opposite side with an axial distance from the side of $67.5\mm$. 
+The placement of the gauges is drawn in figure \ref{fig:straingauges_position}.
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{img/slides/straingauges_position.jpg}
+\label{fig:straingauges_position}
+\caption{Strain gauges position.}
+\end{figure}
+All the strain gauges are linked to a switch of 22 channel able to read the value of all our measurements.
+
+\begin{figure}[h]
+\centering     %%% not \center
+\caption{Strain gauges images.}
+\subfigure[General view]{\includegraphics[width=0.45\textwidth]{img/slides/cylinder_with_straingauges.jpg}}
+\qquad
+\subfigure[Detail]{\includegraphics[width=0.45\textwidth]{img/slides/straingauges_detail.jpg}}
+\label{fig:wheel_geometry}
+\end{figure}
+
+The instrument does not return directly the value of the strain, but each sensor has its own value when the cylinder is not subjected to an internal pressure; so, in order to obtain  the value in which we are interested in, is important to annotate the number correspondent of the internal pressure equal to 0\,bar and than perform the same measurement we the number correspondent to the nominal pressure of \textbf{80\,bar}. Once we have both those measures, we simply apply the difference between the second and the first value.
+
+To decrease the influence of random disturbances and not controllable errors we repeat the procedure 2 times, resetting the pressure after the first measurement emptying completely the cylinder.
+
+The results are reported in table \ref{table:measurement1} and table \ref{table:measurement2}.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lccc|lccc}
+Axial & Distance  & $p = 0\,\text{bar}$ & $p = 80\,\text{bar}$ & Hoop & Distance  & $p = 0\,\text{bar}$ & $p = 80\,\text{bar}$ \\ \midrule
+1     & 6,5$\mm$  & 8                   & 20                    & 1    & 6,5$\mm$  & -36                 & 66                   \\ 
+2     & 11,5$\mm$ & -486                & -477                 & 2    & 11,5$\mm$ & -76                 & 61                   \\
+3     & 16,5$\mm$ & -181                & -191                 & 3    & 16,5$\mm$ & 24                  & 182                  \\
+4     & 21,5$\mm$ & -503                & -532                 & 4    & 21,5$\mm$ & -272                & -109                 \\
+5     & 26,5$\mm$ & 1577                & 1539                 & 5    & 26,5$\mm$ & -372                & -208                 \\
+6     & 31,5$\mm$ & -10                 & -51                  & 6    & 31,5$\mm$ & -214                & -51                  \\
+7     & 36,5$\mm$ & -239                & -281                 & 7    & 36,5$\mm$ & -256                & -97                  \\
+8     & 41,5$\mm$ & 489                 & 449                  & 8    & 41,5$\mm$ & -32                 & 129                  \\
+9     & 46,5$\mm$ & -94                 & -131                 & 9    & 46,5$\mm$ & -350                & -188                 \\
+10    & 51,5$\mm$ & 425                 & 392                  & 10   & 51,5$\mm$ & -910                & -743                 \\
+11    & 67,5$\mm$ & -95                 & -139                 & 11   & 67,5$\mm$ & -809                & -640                 \\ \bottomrule
+\end{tabular}
+\caption{First measurement.}
+\label{table:measurement1}
+\end{table}
+%
+\begin{table}[H]
+\centering
+\begin{tabular}{lccc|lccc}
+Axial & Distance  & $p = 0\,\text{bar}$ & $p = 80\,\text{bar}$ & Hoop & Distance  & $p = 0\,\text{bar}$ & $p = 80\,\text{bar}$ \\ \midrule
+1     & 6,5$\mm$  & 10                  & 21                   & 1    & 6,5$\mm$  & -37                 & 70                   \\ 
+2     & 11,5$\mm$ & -485                & -476                 & 2    & 11,5$\mm$ & -78                 & 66                   \\
+3     & 16,5$\mm$ & -178                & -188                 & 3    & 16,5$\mm$ & 27                  & 185                  \\
+4     & 21,5$\mm$ & -503                & -530                 & 4    & 21,5$\mm$ & -268                & -104                 \\
+5     & 26,5$\mm$ & 1581                & 1540                 & 5    & 26,5$\mm$ & -368                & -205                 \\
+6     & 31,5$\mm$ & -7                  & -49                  & 6    & 31,5$\mm$ & -210                & -48                  \\
+7     & 36,5$\mm$ & -237                & -280                 & 7    & 36,5$\mm$ & -253                & -92                  \\
+8     & 41,5$\mm$ & 491                 & 451                  & 8    & 41,5$\mm$ & -23                 & 133                  \\
+9     & 46,5$\mm$ & -91                 & -129                 & 9    & 46,5$\mm$ & -346                & -184                 \\
+10    & 51,5$\mm$ & 427                 & 390                  & 10   & 51,5$\mm$ & -906                & -745                 \\
+11    & 67,5$\mm$ & -91                 & -138                 & 11   & 67,5$\mm$ & -806                & -636                 \\ \bottomrule
+\end{tabular}
+\caption{Second measurement.}
+\label{table:measurement2}
+\end{table}
+
+From the collected data we can obtain directly the axial and the circumferential strain. Since we are more interested in stresses we must apply the generalized Hook's law.
+
+\begin{align}
+\begin{cases}{}
+\varepsilon_{x} 	 = \frac{1}{E}\, (\sigma_{x} - \nu \, \sigma_{\theta}) \\[0.5em]
+\varepsilon_{\theta} = \frac{1}{E}\, (\sigma_{\theta} - \nu \, \sigma_{x})
+\end{cases}
+\label{eq:hook_law}
+\end{align}
+%
+Now we must revert the system \ref{eq:hook_law} and from that we obtain the stresses.
+%
+\begin{align}
+\begin{cases}{}
+\sigma_{x} 	 = \frac{E}{1-\nu^2} \, (\varepsilon_{x} + \nu \, \varepsilon_{\theta}) \\[0.5em]
+\sigma_{\theta} = \frac{E}{1-\nu^2} \, (\varepsilon_{\theta} + \nu \, \varepsilon_{x})
+\end{cases}
+\label{eq:stresses_from_strains}
+\end{align}
+%
+So we are able to get all the data we need. The results are reported in table \ref{table:measurement1_res} and table \ref{table:measurement2_res}.
+
+To have a better idea of how this data are distributed, in figure \ref{fig:experimental_data} are reported the axial and circumferential strain measured with the strain gauges and the correspondent stresses evaluated with equations \ref{eq:stresses_from_strains}.
+
+\begin{table}[]
+\centering
+\begin{tabular}{@{}llcccc@{}}
+\toprule
+$p = 80\,\text{bar}$ & Distance  & Axial Strain  & Axial Stress                      & Hoop Strain   & Hoop Stress                       \\ \midrule
+1                    & 6,5$\mm$  & $\round{12}$  & $\round{9.64351648351648}$ $\MPa$ & $\round{102}$ & $\round{23.9050549450549}$ $\MPa$ \\
+2                    & 11,5$\mm$ & $\round{9}$   & $\round{11.3413186813187}$ $\MPa$ & $\round{137}$ & $\round{31.6243956043956}$ $\MPa$ \\
+3                    & 16,5$\mm$ & $\round{-10}$ & $\round{8.46637362637363}$ $\MPa$ & $\round{158}$ & $\round{35.0879120879121}$ $\MPa$ \\
+4                    & 21,5$\mm$ & $\round{-29}$ & $\round{4.50483516483516}$ $\MPa$ & $\round{163}$ & $\round{34.9294505494506}$ $\MPa$ \\
+5                    & 26,5$\mm$ & $\round{-38}$ & $\round{2.53538461538461}$ $\MPa$ & $\round{164}$ & $\round{34.5446153846154}$ $\MPa$ \\
+6                    & 31,5$\mm$ & $\round{-41}$ & $\round{1.78835164835165}$ $\MPa$ & $\round{163}$ & $\round{34.1145054945055}$ $\MPa$ \\
+7                    & 36,5$\mm$ & $\round{-42}$ & $\round{1.29032967032967}$ $\MPa$ & $\round{159}$ & $\round{33.1410989010989}$ $\MPa$ \\
+8                    & 41,5$\mm$ & $\round{-40}$ & $\round{1.8789010989011}$ $\MPa$  & $\round{161}$ & $\round{33.7296703296703}$ $\MPa$ \\
+9                    & 46,5$\mm$ & $\round{-37}$ & $\round{2.62593406593407}$ $\MPa$ & $\round{162}$ & $\round{34.1597802197802}$ $\MPa$ \\
+10                   & 51,5$\mm$ & $\round{-33}$ & $\round{3.87098901098901}$ $\MPa$ & $\round{167}$ & $\round{35.5632967032967}$ $\MPa$ \\
+11                   & 67,5$\mm$ & $\round{-44}$ & $\round{1.5167032967033}$ $\MPa$  & $\round{169}$ & $\round{35.269010989011}$ $\MPa$  \\ \bottomrule
+\end{tabular}
+\caption{Results extrapolated from first measurement}
+\label{table:measurement1_res}
+\end{table}
+
+\begin{table}[]
+\centering
+\begin{tabular}{@{}llcccc@{}}
+\toprule
+$p = 80\,\text{bar}$ & Distance  & Axial Strain  & Axial Stress                       & Hoop Strain   & Hoop Stress                       \\ \midrule
+1                    & 6,5$\mm$  & $\round{11}$  & $\round{9.7567032967033}$ $\MPa$   & $\round{107}$ & $\round{24.969010989011}$ $\MPa$  \\
+2                    & 11,5$\mm$ & $\round{9}$   & $\round{11.8167032967033}$ $\MPa$  & $\round{144}$ & $\round{33.209010989011}$ $\MPa$  \\
+3                    & 16,5$\mm$ & $\round{-10}$ & $\round{8.46637362637363}$ $\MPa$  & $\round{158}$ & $\round{35.0879120879121}$ $\MPa$ \\
+4                    & 21,5$\mm$ & $\round{-27}$ & $\round{5.0254945054945}$ $\MPa$   & $\round{164}$ & $\round{35.2916483516484}$ $\MPa$ \\
+5                    & 26,5$\mm$ & $\round{-41}$ & $\round{1.78835164835165}$ $\MPa$  & $\round{163}$ & $\round{34.1145054945055}$ $\MPa$ \\
+6                    & 31,5$\mm$ & $\round{-42}$ & $\round{1.49406593406593}$ $\MPa$  & $\round{162}$ & $\round{33.8202197802198}$ $\MPa$ \\
+7                    & 36,5$\mm$ & $\round{-43}$ & $\round{1.19978021978022}$ $\MPa$  & $\round{161}$ & $\round{33.5259340659341}$ $\MPa$ \\
+8                    & 41,5$\mm$ & $\round{-40}$ & $\round{1.53934065934066}$ $\MPa$  & $\round{156}$ & $\round{32.5978021978022}$ $\MPa$ \\
+9                    & 46,5$\mm$ & $\round{-38}$ & $\round{2.39956043956044}$ $\MPa$  & $\round{162}$ & $\round{34.0918681318681}$ $\MPa$ \\
+10                   & 51,5$\mm$ & $\round{-37}$ & $\round{2.55802197802198}$ $\MPa$  & $\round{161}$ & $\round{33.9334065934066}$ $\MPa$ \\
+11                   & 67,5$\mm$ & $\round{-47}$ & $\round{0.905494505494505}$ $\MPa$ & $\round{170}$ & $\round{35.2916483516484}$ $\MPa$ \\ \bottomrule
+\end{tabular}
+\caption{Results extrapolated from second measurement}
+\label{table:measurement2_res}
+\end{table}
+
+
+\begin{figure}[H]
+\centering     %%% not \center
+\caption{Strain and Stresses from the experiments.}
+\subfigure[Hoop Stress]{\includegraphics[width=0.49\textwidth]{res/experiment/S11_experiments.pdf}}
+\subfigure[Axial Stress]{\includegraphics[width=0.49\textwidth]{res/experiment/S22_experiments.pdf}}
+\subfigure[Hoop Strain]{\includegraphics[width=0.49\textwidth]{res/experiment/E11_experiments.pdf}}
+\subfigure[Axial Strain]{\includegraphics[width=0.49\textwidth]{res/experiment/E22_experiments.pdf}}
+\label{fig:experimental_data}
+\end{figure}
+
+\section{The analytical approach}
+
+Analytical approach is able to predict the mean stresses into the thickness of a cylinder subjected to an internal pressure. In this way we are applying  the following approximations:
+\begin{itemize}
+\item the pressure is applied only for a length of $85\mm$ but we are able to predict the behaviour only of a full loaded cylinder sufficiently far from the sides, so our model is particularly significant in the middle of the pressurized surface;
+\item we are able only to manage a simple cylinder so we are neglecting the two ports that let the fluid to come in and out to move the rod. So the results are significant only far from that.
+\end{itemize}
+Since the thickness is smaller respect to the diameter, $5\mm$ out of $60\mm$ and their ratio is $60\mm / 5\mm = 12$, greater than 10, we can apply the Mariotte's equations for axial and circumferential stresses.
+
+\begin{equation}
+\sigma_x = \frac{p \, d}{2 \, t} = 40 \MPa
+\end{equation}
+
+\begin{equation}
+\sigma_\theta = \frac{p \, d}{4 \, t} =  20 \MPa
+\end{equation}
+
+\begin{conditions}
+p & internal pressure equal to $80\,bar$;\\[0.5em]
+d & external diameter equal to $60\mm$;\\[0.5em]
+t & thickness equal to $5\mm$;\\[0.5em]
+\end{conditions}
+
+As we can see the mean result predicted with Mariotte's equations are comparable with the experimental data. This is a quite approximated solution, but that can be really useful to have a really fast and simple idea of the internal stresses of the hydraulic cylinder, and multiplying this numbers by a proper stress concentration factor $K_t$ we immediately get also the approximated stresses in correspondence of the holes. 
+We have not measured then maximum stresses in the ports, but we can compare this approximated result with the results of the FEM analysis both with shell and solid finite elements.
+
+\section{Shell finite elements}
+In the FEM analysis we want to compare a simplified model to a more complete one. In the first case we simply draw a cylinder clamped at the end, and in the second one we add also the two ports and the two holes to study the behaviour not only in correspondence of the point in which strain gauges are placed, but also to understand the maximum stresses in the holes.
+\subsection*{Cylinder only}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{img/shell/cylinder_only/screen1.png}
+\caption{Cylinder model with ports.}
+\label{fig:shell_cylinder_only_screen1}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{img/shell/cylinder_only/screen2.png}
+\caption{Cylinder model with ports, loads and constraints.}
+\label{fig:shell_cylinder_only_screen2}
+\end{figure}
+
+From this kind of analysis we can only get the comparison with the experimental data. As we can see from figure \ref{fig:shellmodel1} the trends that we predict are quite similar to the real ones, but our model over estimate the whole stresses. 
+This is an expected problem, in fact the boundary conditions we have imposed are stronger than that in reality. We cannot improve this kind of problem with shell finite elements because they are quite good to describe the stress condition, in particular near from the boundaries. We could also model the side faces of the cylinder but than there will have been a really rough approximation in the linking of the basis with the lateral surfaces. 
+We can see, in particular in axial strains and stresses, that the value increases a lot (in modulus) when the coordinate approaches the clamp ($z = 0$).
+
+\begin{figure}[h]
+\centering     %%% not \center
+\caption{Strains and Stresses with shell finite elements.}
+\subfigure[Hoop  Stress]{\includegraphics[width=0.49\textwidth]{res/shellmodel1/S11_shell_model1.pdf}}
+\subfigure[Axial Stress]{\includegraphics[width=0.49\textwidth]{res/shellmodel1/S22_shell_model1.pdf}}
+\subfigure[Hoop Strain]{\includegraphics[width=0.49\textwidth]{res/shellmodel1/E11_shell_model1.pdf}}
+\subfigure[Axial Strain]{\includegraphics[width=0.49\textwidth]{res/shellmodel1/E22_shell_model1.pdf}}
+\label{fig:shellmodel1}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{img/shell/cylinder_only/screen4.png}
+\caption{Von Mises's stresses distribution into the cylinder.}
+\label{fig:shell_cylinder_only_screen4}
+\end{figure}
+
+
+
+
+
+\subsection*{Cylinder with ports}
+
+To perform a more accurate analysis is important to model the two ports with the internal holes. In fact in correspondence of the hole, we expect to have the most stressed point, and we may want to dimension the object according to the stresses in that point. 
+Moreover it allows us to perform a comparison in the mid-line between the previous case, the current case and the data we have measured with strain gauges.
+\begin{figure}[H]
+\centering     %%% not \center
+\caption{Hydraulic cylinder, model with ports.}
+\subfigure[Model]{\includegraphics[height=0.37\textwidth]{img/shell/cylinder_ports/screen3.png}}
+\subfigure[Loads and constraint]{\includegraphics[height=0.37\textwidth]{img/shell/cylinder_ports/screen4.png}}
+\label{fig:shell_cylinder_ports_screen1_2}
+\end{figure}
+Launching the analysis we have obtained the drawn in figure \ref{fig:shell_cylinder_ports_screen3_4}.
+\begin{figure}[H]
+\centering     %%% not \center
+\caption{Von Mises Stresses.}
+\subfigure[General view]{\includegraphics[width=0.6\textwidth]{img/shell/cylinder_ports/screen6.png}}
+\subfigure[More stressed point]{\includegraphics[width=0.6\textwidth]{img/shell/cylinder_ports/screen7.png}}
+\label{fig:shell_cylinder_ports_screen3_4}
+\end{figure}
+As we did before, we prefer to plot the axial and hoop strain and stresses respect to the axial coordinate that let us to better understand the exact trend respect to just have a color figure. 
+
+The first comparison is between the simplified model and the better one in the mid-line not passing through the ports.
+
+\begin{figure}[h]
+\centering     %%% not \center
+\caption{Stresses with shell finite elements and model with ports.}
+\subfigure[Hoop  Stress]{\includegraphics[width=0.49\textwidth]{res/shellmodel2/line/S11_shell_model2.pdf}}
+\subfigure[Axial Stress]{\includegraphics[width=0.49\textwidth]{res/shellmodel2/line/S22_shell_model2.pdf}}
+\label{fig:shellmodel2stress}
+\end{figure}
+
+\begin{figure}[h]
+\centering     %%% not \center
+\caption{Strains with shell finite elements and model with ports.}
+\subfigure[Hoop Strain]{\includegraphics[width=0.49\textwidth]{res/shellmodel2/line/E11_shell_model2.pdf}}
+\subfigure[Axial Strain]{\includegraphics[width=0.49\textwidth]{res/shellmodel2/line/E22_shell_model2.pdf}}
+\label{fig:shellmodel2strain}
+\end{figure}
+
+
+From figure \ref{fig:shell_cylinder_ports_screen3_4} we can see that, except for points close to the port, the stress distribution in the cylinder is quite axisymmetrical.
+This behaviour is also confirmed by the comparison with the previous model. Both strains and stresses are almost coincident, and this confirm us than to study the stresses distribution far from the ports does not improve in any way result to use shell finite elements. In fact we obtain the same overestimated value in any of the two case studies.
+\paragraph*{Comparison into the hole}
+The situation changes instead when we are considering a path that intersects the critical point. The results are reported in figure \ref{fig:shellmodel2stress_portspath}.
+The comparison is done on the external surface since we have both date there, but the most critical point is into the internal surface so we will plot the critical data just in the next paragraphs.
+
+\begin{figure}[H]
+\centering     %%% not \center
+\caption{Stresses with shell finite elements and model with ports.}
+\subfigure[Hoop  Stress]{\includegraphics[width=0.49\textwidth]{res/shellmodel2/holeline/S11_shell_model2_portspath.pdf}}
+\subfigure[Axial Stress]{\includegraphics[width=0.49\textwidth]{res/shellmodel2/holeline/S22_shell_model2_portspath.pdf}}
+\label{fig:shellmodel2stress_portspath}
+\end{figure}
+
+\begin{figure}[H]
+\centering     %%% not \center
+\caption{Strains with shell finite elements and model with ports.}
+\subfigure[Hoop Strain]{\includegraphics[width=0.49\textwidth]{res/shellmodel2/holeline/E11_shell_model2_portspath.pdf}}
+\subfigure[Axial Strain]{\includegraphics[width=0.49\textwidth]{res/shellmodel2/holeline/E22_shell_model2_portspath.pdf}}
+\label{fig:shellmodel2strain_portspath}
+\end{figure}
+
+In this case the strains and the stresses show an uneven behaviour probably also due to the mesh size.
+
+\paragraph*{Inner surface of the hole}
+To calculate the maximum stress at which the hole is subjected is fundamental to plot the stresses into the inner surface on a path that passes through the holes. In fact in that region, it is placed the most stressed point. This is done in figure \ref{fig:shellmodel2stress_inner}. Axial stress of the inner surface has been reversed in the plot to guarantee the same sign convention.
+
+
+\begin{figure}[H]
+\centering     %%% not \center
+\caption{Internal and external stresses with shell finite elements and model with ports.}
+\subfigure[Hoop  Stress]{\includegraphics[width=0.49\textwidth]{res/shellmodel2/inner/S11_shell_model2_inner.pdf}}
+\subfigure[Axial Stress]{\includegraphics[width=0.49\textwidth]{res/shellmodel2/inner/S22_shell_model2_inner.pdf}}
+\label{fig:shellmodel2stress_inner}
+\end{figure}
+
+%\begin{figure}[H]
+%\centering     %%% not \center
+%\caption{Internal and external strains with shell finite elements and model with ports.}
+%\subfigure[Hoop Strain]{\includegraphics[width=0.49\textwidth]{res/shellmodel2/inner/E11_shell_model2_inner.pdf}}
+%\subfigure[Axial Strain]{\includegraphics[width=0.49\textwidth]{res/shellmodel2/inner/E22_shell_model2_inner.pdf}}
+%\label{fig:shellmodel2strain_inner}
+%\end{figure}
+
+Finally from hoop and axial stresses we get the maximum Von Mises stress into the hole, that is equal to $\round{122.1654} \MPa$.
+
+\section{Solid finite elements}
+As we have previously seen many times, the shell finite elements are able to represent the trend of strain and stresses but very often they overestimate the values of circumferential stresses. To overcome this problem is necessary to introduce a more refined kind of elements that also let us to model the side of the hydraulic cylinder. 3D solid elements are in fact able to represent also the connection between the lateral surface and the close side of the component.
+The drawback is that the simulation requires a lot more time even for a quite simple structure. In this case this is not a problem, but is a point that has to be taken in consideration when you are dealing with a more complicated structure.
+
+Also in case we consider two different models, one without the two bushings and the other that instead have them.
+
+\subsection{Cylinder only}
+
+\begin{figure}[h]
+\centering     %%% not \center
+\caption{Solid finite element, modelling without ports}
+\subfigure[The model]{\includegraphics[height=0.35\textwidth]{img/solid/model1/fig2.png}}
+\subfigure[Loads]{\includegraphics[height=0.35\textwidth]{img/solid/model1/fig5.png}}
+\label{fig:solidmodel1_loads}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[height=0.35\textwidth]{img/solid/model1/fig8.png}
+\caption{Constraints.}
+\label{fig:solidmodel1_constraints}
+\end{figure}
+
+If previously we have clamped the end profile of the cylinder, in this case we set as boundary conditions that the whole side is clamped as represented in figure \ref{fig:solidmodel1_constraints}.
+
+Since both the geometry, the loads and the constraints are axisymmetric, the resultant stresses are axisymmetric as expected like shown in figures \ref{fig:solidmodel1_abqstresses}.
+
+\begin{figure}[H]
+\centering     %%% not \center
+\caption{Stresses with solid finite elements and model without ports.}
+\subfigure[Hoop stresses]{\includegraphics[height=0.35\textwidth]{img/solid/model1/fig15.png}}
+\subfigure[Axial stresses]{\includegraphics[height=0.35\textwidth]{img/solid/model1/fig16.png}}
+\label{fig:solidmodel1_abqstresses}
+\end{figure}
+
+We should extrapolate the numerical trends of strains and stresses on an external path and than compare them with the experimental data and the shell results. This comparison is done in the following figures.
+
+
+\begin{figure}[H]
+\centering     %%% not \center
+\caption{Stresses with solid finite elements and model without ports.}
+\subfigure[Hoop  Stress]{\includegraphics[width=0.49\textwidth]{res/solidmodel1/S11_top_noports.pdf}}
+\subfigure[Axial Stress]{\includegraphics[width=0.49\textwidth]{res/solidmodel1/S22_top_noports.pdf}}
+\label{fig:solidmodel1_stress_top_noports}
+\end{figure}
+
+\begin{figure}[H]
+\centering     %%% not \center
+\caption{Strains with solid finite elements and model without ports.}
+\subfigure[Hoop Strain]{\includegraphics[width=0.49\textwidth]{res/solidmodel1/E11_top_noports.pdf}}
+\subfigure[Axial Strain]{\includegraphics[width=0.49\textwidth]{res/solidmodel1/E22_top_noports.pdf}}
+\label{fig:solidmodel1_strain_top_noports}
+\end{figure}
+
+We can highlight two main improvements:
+\begin{itemize}
+\item the overestimation of hoop stress and strain is now reduced;
+\item the behaviour near the closed side ($z=0$) of all stresses and strains is not diverging so much as shell finite elements case.
+\end{itemize}
+
+
+\subsection{Cylinder with ports}
+
+\begin{figure}[H]
+\centering
+\includegraphics[height=0.35\textwidth]{img/solid/model2/fig17.png}
+\caption{Constraints.}
+\label{fig:solidmodel2}
+\end{figure}
+
+We refine our model inserting also the two ports. This let us to find the maximum value of the stresses into the holes. As we have seen for the shell elements on the mean line does not have any real advantage to use this refined model respect to the previous one because the results does not changes but the complexity of the simulation increases significantly.
+The loads and the boundary conditions have not changed respect to the cylinder without ports.
+A representative image of the simulation results is printed in figure \ref{fig:solidmodel2_abqstresses}
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[height=0.35\textwidth]{img/solid/model2/fig21.png}
+\caption{Constraints.}
+\label{fig:solidmodel2_abqstresses}
+\end{figure}
+
+%We should extrapolate the numerical trends of strains and stresses on an internal path and than compare them with the experimental data and the shell results. This %comparison is done in the following figures.
+
+
+\subsection{Cylinder with ports: total pressure}
+
+Until now we have taken a configuration in which the pressure was always applied from the side for a length of $85\mm$. This is only a particular condition. To generalize as much as possible is also interesting to compare also a configuration with a pressure applied for all the length of the cylinder. With the results we can verify if all the previous results are meaningful and that with the same pressure applied for a larger surface we do not increase the maximum stress but only the surface on which the stresses are spread.
+
+\begin{figure}[H]
+\centering     %%% not \center
+\caption{Model with solid finite elements and with ports.}
+\subfigure[Model]{\includegraphics[height=0.35\textwidth]{img/solid/model3/fig17.png}}
+\subfigure[Loads and contraints]{\includegraphics[height=0.35\textwidth]{img/solid/model3/fig25.png}}
+\label{fig:solidmodel3_abqconfig}
+\end{figure}
+
+A representative image of the deformed shape and of the stresses distribution is sketched in figure \ref{fig:solidmodel3_abqstresses}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[height=0.35\textwidth]{img/solid/model3/fig22.png}
+\caption{Results of the simulation.}
+\label{fig:solidmodel3_abqstresses}
+\end{figure}
+
+As usually to perform a more clear comparison to verify the previous consideration it is really useful to plot the strains and stresses distribution in the different configurations. This is done in figures \ref{fig:solidmodel3_stress_top_noports} and \ref{fig:solidmodel3_str_top_noports}.
+
+\begin{figure}[H]
+\centering     %%% not \center
+\caption{Stresses with solid finite elements and model without ports.}
+\subfigure[Hoop  Stress]{\includegraphics[width=0.49\textwidth]{res/solidmodel3/S11_top_noports.pdf}}
+\subfigure[Axial Stress]{\includegraphics[width=0.49\textwidth]{res/solidmodel3/S22_top_noports.pdf}}
+\label{fig:solidmodel3_stress_top_noports}
+\end{figure}
+
+\begin{figure}[H]
+\centering     %%% not \center
+\caption{Strains with solid finite elements and model without ports.}
+\subfigure[Hoop Strain]{\includegraphics[width=0.49\textwidth]{res/solidmodel3/E11_top_noports.pdf}}
+\subfigure[Axial Strain]{\includegraphics[width=0.49\textwidth]{res/solidmodel3/E22_top_noports.pdf}}
+\label{fig:solidmodel3_strain_top_noports}
+\end{figure}
+
+As we can notice there is no difference when sufficiently far from the surface where the pressure is no more applied in model 2.
+So we can state that the results we have obtained until now are consistent also if we change the surface extension in which the pressure is applied. Obviously the total stresses area is proportional to the loaded surface but the intensity of the strain and stresses is the same.
+
+For completeness we report also the strains on a path that passes through the ports.
+
+\begin{figure}[H]
+\centering     %%% not \center
+\caption{Strains with solid finite elements and model without ports.}
+\subfigure[Radial Strain]{\includegraphics[width=0.49\textwidth]{res/solidmodel3/E11_bottom_ports.pdf}}
+\subfigure[Hoop Strain]{\includegraphics[width=0.49\textwidth]{res/solidmodel3/E22_bottom_ports.pdf}}
+\subfigure[Axial Strain]{\includegraphics[width=0.49\textwidth]{res/solidmodel3/E33_bottom_ports.pdf}}
+\label{fig:solidmodel3_strain_bottom_ports}
+\end{figure}
+
+
+
+
+\section{Welding analysis}
+
+To perform a static analysis on the welding between the cylinder and the base, is necessary to know the stresses at $6\mm$ from the origin of the base. Previously we have plotted the results of the solid finite elements simulation with a reference system that has started from the lateral surface of the hydraulic cylinder. But from that we miss the data we are interested in.
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{img/slides/weldings.png}
+\caption{Welding position.}
+\label{fig:weldings}
+\end{figure}
+In reality we can extrapolate the axial and hoop stresses from the FEM analysis.
+Since we have performed more than one model analysis, we must evaluate the safety factor in correspondence of the welding for each of that.
+
+The welding of our case study, as we see in figure \ref{fig:weldings}, can be modelled as sketched in figure \ref{fig:welding_model}. 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.4\textwidth]{img/slides/welding_model.png}
+\caption{}
+\label{fig:welding_model}
+\end{figure}
+We have to evaluate the Mises stress and then compare with the admissible one for our steel S355; in particular to get this value we must check the size of the plates we are welding together. In fact, the resistance decreases for very thick plates and we must take this behaviour in account in case it is significant.
+The thickness of the hydraulic cylinder is $5\mm$ that is clearly less than the limit that distinguish the reduction of strength of $40\mm$. 
+Then, we have to decide on which kind of class we base our analysis. In fact class I is preferable in case we have a strict control on the welding condition and it is less restrictive than the class II which, instead, is highly suggested to be used when the welding has a lower quality control. 
+To be in a more safety region, we decide to refer to class II.
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.4\textwidth]{img/welding_table_admissible.png}
+\caption{}
+\label{fig:table_adm}
+\end{figure}
+In conclusion, from material table \ref{fig:table_adm}, we get the constraint law in order to perform the static assessment displayed in equation \ref{eq:sigma_admissible}.
+\begin{equation}
+\sigma_\text{ID} = \sigma_\text{VM} \leq \frac{\sigma_\text{admissible}}{\eta}
+\label{eq:sigma_admissible}
+\end{equation}
+\begin{conditions}
+\eta & safety factor;\\[0.5em]
+\end{conditions}
+
+From model 1, the simple cylinder without the two ports, the stresses in the welding are:
+
+\begin{align}
+\begin{cases}{}
+\sigma_{x} = -19.5838 \MPa \\[0.5em]
+\sigma_{\theta} = -3.64772 \MPa
+\end{cases}
+\label{eq:weld_stresses_model1}
+\end{align}
+We can recognize from figure \ref{fig:welding_model} that the parallel stress is correspondent to the circumferential stress and that the perpendicular stress is correspondent to the axial stress.
+From this we can evaluate $\sigma_\text{ID}$, that is:
+\begin{equation}
+\sigma_\text{ID} = \sqrt{\sigma_\parallel^2 - \sigma_\parallel \cdot \sigma_\perp + \sigma_\perp^2 + 3\, \tau_\parallel ^ 2} = \round{18.038704629279788 } \MPa
+\label{eq:id}
+\end{equation}
+In the equation \ref{eq:id}, we have neglected the shear component, since it's smaller compared to the others.
+Now the safety factor is obtained simply by reversing the equation \ref{eq:sigma_admissible}.
+\begin{equation}
+\eta = \frac{0.85 \cdot 240 \MPa}{\sigma_\text{ID}} = \round{11.309016040368798}
+\end{equation}
+The value of the safety factor ensures us that the welding can resist the static loading with a huge margin.
+
+
+Instead, from model 2, the cylinder with the two ports, its stresses in the welding are:
+
+\begin{align}
+\begin{cases}{}
+\sigma_{x} = -20.6576 \MPa \\[0.5em]
+\sigma_{\theta} = -4.3915 \MPa
+\end{cases}
+\label{eq:weld_stresses_model2}
+\end{align}
+Like the case before, we can recognize from figure \ref{fig:welding_model} that the parallel stress is correspondent to the circumferential stress and that the perpendicular stress is correspondent to the axial stress.
+From this we can evaluate $\sigma_\text{ID}$, that is:
+\begin{equation}
+\sigma_\text{ID} = \sqrt{\sigma_\parallel^2 - \sigma_\parallel \cdot \sigma_\perp + \sigma_\perp^2 + 3\, \tau_\parallel ^ 2} = \round{18.930507004369954} \MPa
+\end{equation}
+Once again,we have neglected the shear component, since it is smaller compared to the others.
+Now the safety factor is obtained simply by reversing the equation \ref{eq:sigma_admissible}.
+\begin{equation}
+\eta = \frac{0.85 \cdot 240 \MPa}{\sigma_\text{ID}} = \round{10.776256544682520}
+\end{equation}
+The value of the safety factor ensure us that the welding can resist the static loading with a huge margin.
+
+In conclusion, we can notice that in both cases the results are very similar; so from this result, it is interesting to highlight that the simplified model is able to guarantee a good result, which is particularly considerable since it's in the safety side.
+
+
+
+
+\end{document}
+

@@ -1,0 +1,117 @@
+\documentclass{standalone}
+
+\usepackage[utf8]{inputenc}
+\usepackage{structuralanalysis}
+%\usepackage{3dstructuralanalysis}
+
+\usepgflibrary{fpu}%----- this
+
+\begin{document}
+
+\newdimen\XCoord
+\newdimen\YCoord
+\newcommand*{\ExtractCoordinate}[1]{\path (#1); \pgfgetlastxy{\XCoord}{\YCoord};}%
+
+\begin{tikzpicture}
+
+	\def \mm {$\,$mm}
+	
+	\def \M {{0,	-3.0172956,	-5.317239309,	-4.810789859,	-4.8094945545,	-3.2614558545,	-2.111484,	0
+}}
+	
+	%scaling of M
+	\pgfmathsetmacro{\k}{2}
+
+	\pgfmathsetmacro{\b}{1015/1}
+	\pgfmathsetmacro{\s}{746.5/1}
+	\pgfmathsetmacro{\bs}{\b-\s}
+	\pgfmathsetmacro{\yi}{396.5/1}
+	\pgfmathsetmacro{\R}{430/1}
+	
+	\pgfmathsetmacro{\ab}{\b-\s}
+	\pgfmathsetmacro{\bc}{\b-\s+\yi}
+	\pgfmathsetmacro{\cd}{\b+\s}
+	\pgfmathsetmacro{\de}{\b-\s}
+	
+	\scaling{0.005*1000};
+	
+	\point{a}{0}{0};
+	\point{b}{0.2685}{0};
+	\point{c}{0.665}{0};
+	\point{d}{1.7615}{0};
+	\point{e}{2.030}{0};
+	
+	\point{b1}{0.2685}{-0.430};
+	\point{b2}{0.2685}{0};
+	
+	\point{d1}{1.7615}{-0.430};
+	\point{d2}{1.7615}{0};
+	
+% 	\point{a}{0}{0};
+% 	\point{b}{\bs}{0};
+% 	\point{c}{\bs+\yi}{0};
+% 	\point{d}{\b + \s}{0};
+% 	\point{e}{\b+\b}{0};
+	
+	
+	%\draw (e) circle (1);
+	
+	\pgfmathsetmacro{\adx}{\M[0] / \k}
+	\pgfmathsetmacro{\bsx}{\M[1] / \k}
+	\pgfmathsetmacro{\bdx}{\M[2] / \k}
+	\pgfmathsetmacro{\csx}{\M[3] / \k}
+	\pgfmathsetmacro{\cdx}{\M[4] / \k}
+	\pgfmathsetmacro{\dsx}{\M[5] / \k}
+	\pgfmathsetmacro{\ddx}{\M[6] / \k}
+	\pgfmathsetmacro{\esx}{\M[7] / \k}
+	
+ 	\internalforces{a}{b}{\adx}{\bsx}[0][brown];
+ 	\internalforces{b}{c}{\bdx}{\csx}[0][brown];
+ 	\internalforces{c}{d}{\cdx}{\dsx}[0][brown];
+ 	\internalforces{d}{e}{\ddx}{\esx}[0][brown];
+	
+	\beam{1}{a}{b};
+	\beam{1}{b}{c};
+	\beam{1}{c}{d};
+	\beam{1}{d}{e};
+	\beam{2}{b1}{b2};
+	\beam{2}{d1}{d2};
+	
+% 	\load{1}{a}[90][1][0][$P_1$][above][cyan]
+% 	\load{1}{b}[-90][1][-1][$F_{y_1}$][above, yshift=30][cyan]
+% 	\load{1}{c}[-90][1][-1][$F_{y_2}$][above, yshift=30][cyan]
+% 	\load{1}{d}[-90][1][-1][$F_{y_3}$][above, yshift=30][cyan]
+% 	\load{1}{e}[90][1][0][$P_2$][above][cyan]
+% 	\load{1}{e}[0][1][0][$H$][left, xshift=20][cyan]
+% 	
+% 	\load{1}{b1}[180][1][0][$Y_1$][left, xshift=0][brown]
+% 	\load{1}{d1}[0][1][0][$Y_2$][left, xshift=20][brown]
+% 	
+% 	\load{1}{b1}[-90][1][0][$Q_1$][above, yshift=-20][brown]
+% 	\load{1}{d1}[-90][1][0][$Q_2$][above, yshift=-20][brown]
+	
+	
+	%\load{2}{c}[15][150]
+	%\load{1}{d}[-90]
+	%\load{1}{e}[90]
+	
+	\dimensioning{1}{a}{b}{-2.8}[\ab];
+	\dimensioning{1}{b}{c}{-2.8}[\bc \mm];
+	\dimensioning{1}{c}{d}{-2.8}[\cd \mm];
+	\dimensioning{1}{d}{e}{-2.8}[\de];
+	\dimensioning{2}{d1}{d}{-1}[\R \mm];
+	
+	\notation{1}{a}{$0$}[left];
+	\notation{1}{b}{$1$}[below left];
+	\notation{1}{c}{$2$}[below right];
+	\notation{1}{d}{$3$}[below left];
+	\notation{1}{e}{$4$}[below left]
+	
+	\draw[black,thick,-latex] (e)++(0,3.5) -- ++(0,-1.5) node[yshift=-5] {z};
+	\draw[black,thick,-latex] (e)++(0,3.5)  -- ++(-1.5,0) node[xshift=-5] {y};
+	
+	%\notation{1}{a}{$P_1$}[above = 1.3];
+	
+	
+\end{tikzpicture}
+\end{document}

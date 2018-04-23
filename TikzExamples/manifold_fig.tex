@@ -1,0 +1,37 @@
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand*\circled[2][fill=white!0]{\tikz[]{
+            \node[thick,shape=circle,minimum size=0.9cm,draw,inner sep=1pt,#1] (char) {#2};}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%            
+
+
+\begin{tikzpicture}[>=triangle 60]
+
+% rectangle
+
+%\draw[rounded corners=15pt] (0,0) rectangle (6,1);
+
+
+\coordinate (p15xx) at (6, 0) {};
+\coordinate (p14) at (-3, 2.5) {};
+\coordinate (p15x) at (-1.5, 2.5) {};
+\coordinate (p9) at (3, 2.5) {};
+
+\draw[->,thick] (0,0)--(p15xx) ;
+\draw[->,thick] (p14)--(-3, 0.75) node [near start, left,xshift=-0.1cm] {\Large From HPT};
+\draw[->,thick] (-1.5,0)--(p15x)  node [near end, right,xshift=0.1cm] {\Large To LPT};
+\draw[->,thick] (p9)--(3, 0.75)  node [near start, right,xshift=0.1cm] {\Large From HP ECO};;
+
+%\draw[->,thick] (0,0)--(p17) node [midway, right,xshift=0.1cm,yshift=0.4cm] {\Large To Heat User};;
+%\draw[->,thick] (p10x)--(2.5,0) ;
+
+\node[black,right] at (p15xx) {\Large \circled{15**}};
+\node[black,above] at (p14) {\Large \circled[fill=green!50]{14}};
+\node[black,above] at (p15x) {\Large \circled{15*}};
+\node[black,above] at (p9) {\Large \circled{9}};
+
+ \node at (0,0) [thick,draw, rounded rectangle,inner sep=10pt,fill=cyan!50] {\huge \quad Manifold (or Header) \quad\quad};
+ 
+\end{tikzpicture}

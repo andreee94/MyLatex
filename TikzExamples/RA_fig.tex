@@ -1,0 +1,34 @@
+\usetikzlibrary{decorations.pathmorphing}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{decorations.pathmorphing}
+\usetikzlibrary{arrows}
+\usetikzlibrary{automata}
+\begin{tikzpicture}[>=triangle 60]
+
+\draw[thick,draw=cyan,fill=cyan!50] (3.5,-2.5) -- (-3.5,-2.5) -- (-3.5,-1) decorate[decoration=snake] {-- (3.5,-1)} -- cycle;
+
+\node [anchor=center] at (0,-1.8) {\large Saturated liquid}; 
+
+\draw[ultra thick] (0,0) ++(0:2) arc (0:180:2); 
+
+\draw[ultra thick] (-2,0)--(-3.5,0)--(-3.5,-2.5)--(3.5,-2.5)--(3.5,0)--(2,0);
+
+\node [anchor=center] at (0,0) {\huge $RA$}; 
+
+\draw[thick,->] (0,-2.5)--(0,-4.5);
+\node [anchor=east] at (0,-3.5) {\huge $8$}; 
+
+%4 extr
+\draw[thick,<-] (-1.5,1.5) to [out=165, in=-90] (-3.5,4);
+%in
+\draw[thick,->] (5,0) to [out=180, in=-75] (3,1.5)
+					      to [out=105, in=75] (0.5,2);
+
+\draw[thick,->] (5,-2)--(5,0);
+\node [anchor=south] at (6,0) {\huge $7$}; 
+
+\draw[thick,->] (7,0)--(5,0);
+\node [anchor=west] at (5,-1) {\huge $2_{DR}$}; 
+
+\node [anchor=north] at (-2.5,3) {\huge $5$}; 
+\end{tikzpicture}

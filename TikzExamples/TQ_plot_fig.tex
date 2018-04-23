@@ -1,0 +1,85 @@
+
+\usetikzlibrary{decorations.markings}
+
+\begin{tikzpicture}[>=triangle 60]
+
+\tikzset{->-/.style={decoration={
+  markings,
+  mark=at position #1 with {\arrow{>}}},postaction={decorate}}}
+  
+\tikzset{-<-/.style={decoration={
+  markings,
+  mark=at position #1 with {\arrow{<}}},postaction={decorate}}}
+
+\begin{axis}[
+    scale only axis,
+    grid=major,
+    axis lines=middle,
+    inner axis line style={->},
+    ylabel={Temperature T (K)},
+    xlabel={Heat transfer $\dot Q \ (MW)$},
+    ytick={100,130,...,440},
+    xtick={0,15,...,160},
+    ymin=60,
+    ymax=440,
+    xmin=0,
+    xmax=160
+]
+
+% plot red
+\addplot[->-=.5,color=red,thick] coordinates {
+	(0, 383.1650)
+	(23.35, 253.2673)
+	(130.37,  253.2673)
+	(155.27, 166.6521)
+        };
+
+% plot blue
+\addplot[-<-=0.5,color=blue,thick,] coordinates {
+	(0, 255)
+	(23.35, 240.9590)
+	(130.37,  176.6212)
+	(155.27, 161.6521)
+        };
+
+% dot red
+\addplot[dotted,mark=*,red] coordinates {
+	(0, 383.1650)
+	(23.35, 253.2673)
+	(130.37,  253.2673)
+	(155.27, 166.6521)
+        };
+        
+% dot blue
+\addplot[dotted,mark=*,blue] coordinates {
+	(0, 255)
+	(23.35, 240.9590)
+	(130.37,  176.6212)
+	(155.27, 161.6521)
+        };
+  % vertical left
+ \addplot [dashed,thick] coordinates {
+(23.35,0) (23.35,400)
+};
+
+  % vertical right
+\addplot [dashed,thick] coordinates {
+(130.37,100) (130.37,400)
+};
+ 
+\pgfplotsset{
+    after end axis/.code={
+        \node[blue,below] at (axis cs: 0, 255) {(10)};
+        \node[blue,below, fill = white] at (axis cs:23.35, 240.9590-5) {(9b)};
+        \node[blue,below,  fill = white] at (axis cs:130.37,  176.6212-5) {(9a)};
+        \node[blue,below,  fill = white] at (axis cs:155.27, 161.6521-5) {(9)};
+        
+        \node[red,right] at (axis cs:0,383.1650) {($2_{extr}$)};
+        \node[red,above right, fill = white] at (axis cs:155.27+1,166.6521+1) {($2_{DR}$)};
+    }
+}
+
+\end{axis}
+
+
+\end{tikzpicture}

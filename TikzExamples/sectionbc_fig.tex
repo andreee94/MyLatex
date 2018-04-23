@@ -1,0 +1,108 @@
+\usetikzlibrary{decorations.pathmorphing}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{decorations.pathmorphing}
+\usetikzlibrary{arrows}
+
+\usetikzlibrary{decorations,decorations.pathmorphing}
+
+%middle zig zag
+\pgfdeclaremetadecoration{middlezigzag}{straight}{
+    \state{straight}[switch if less than=\pgfmetadecorationsegmentlength to final,
+                  width=\pgfmetadecoratedpathlength/2 - \pgfmetadecorationsegmentlength/2 ,
+                  next state=zigzag] {
+        \decoration{curveto}
+    }
+    \state{zigzag}[width=\pgfmetadecorationsegmentlength,
+                   next state=final] {
+        \decoration{zigzag}
+    }
+    \state{final}{
+        \decoration{curveto}
+        \beforedecoration{\pgfpathmoveto{\pgfpointmetadecoratedpathfirst}}
+    }
+}
+
+\tikzset{
+    middle zigzag/.style={
+        decorate,
+        decoration={
+            middlezigzag,
+            meta-segment length=#1,
+            segment length=0.5cm
+        }
+    },
+    middle zigzag/.default=1.5cm
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand*\circled[1]{\tikz[]{
+            \node[thick,shape=circle,minimum size=0.9cm,draw,inner sep=1pt] (char) {#1};}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%            
+            
+            
+\begin{tikzpicture}[>=triangle 60]
+
+% rectangle
+\draw[dashed] (-1.5,0.5) rectangle (8.5,5.5);
+
+\coordinate (p11x) at (0,0);
+\coordinate (p10) at (0,3);
+\coordinate (p10x) at (0,6);
+\coordinate (p7) at (4,3);
+\coordinate (p7x) at (7,0);
+\coordinate (p9) at (4,6);
+
+\draw[line width=4mm,cyan!50] (p7x)--(p7) ;
+%\draw[->,thick] (p7)--(p10) ;
+\draw[line width=4mm,cyan!50] (p7)--(p9) ;
+%\draw[->,thick] (p10)--(p10x) ;
+\draw[line width=4mm,cyan!50] (p10)--(p11x) ;
+
+\draw[->,middle zigzag,very thick] (p7x)--(p7) node [midway, right,xshift=0.1cm,yshift=0.4cm] {\Large Sat. liquid};
+\draw[->,thick] (p7)--(p10) ;
+\draw[->,middle zigzag,very thick] (p7)--(p9)  node [midway, right,xshift=0.2cm] {\Large HP ECO};
+\draw[->,thick] (p10)--(p10x) ;
+\draw[->,middle zigzag,very  thick] (p10)--(p11x)  node [midway, right,xshift=0.2cm] {\Large LP SH};
+
+%pump 
+\draw[] (p7)--(p10) node[midway, thick,shape=circle,minimum size=0.8cm,draw,fill=white] {};
+\path (p7)--(p10) node[midway, thick,regular polygon, regular polygon sides=3,rotate=90,minimum size=0.75cm,draw,fill=white] {};
+%%%%%%%%%%%%    
+            
+            
+\node[black,below] at (p7x) {\Large \circled{7*}};
+\path (p7) ++(0.3,0.1) node[black,right] {\Large \circled{7}};
+\node[black,above] at (p9) {\Large \circled{9}};
+\node[black,left] at (p10) {\Large \circled{10}};
+\node[black,above] at (p10x) {\Large \circled{10*}};
+\node[black,below] at (p11x) {\Large \circled{11*}};
+
+
+
+% 
+% % rectangle
+% \draw[very thick] (0,0) rectangle (5,3);
+% % cold end
+% \draw[fill=blue!30,draw=blue,thick] (6.2,1.5) ellipse (0.9 and 1.2);
+% \node[blue,right] at (7,2) {Cold\ End};
+% % hot end
+% \draw[fill=red!30,draw=red,thick] (-1.5,1.5) ellipse (0.9 and 1.2);
+% \node[red,left] at (-2.3,2.02) {Hot\ End};
+% % air line
+% \draw[]  (-1,2)--(1,2);
+% \draw[decorate,decoration=zigzag] (1,2)--(4,2);
+% \draw[->]  (4,2)--(6,2);
+% % flue gas linetriangle 60
+% \draw[<-]  (-1,1)--(1,1);
+% \draw[decorate,decoration=zigzag] (1,1)--(4,1);
+% \draw[]  (4,1)--(6,1);
+% %
+% \node[red,left] at (-1,2) {$2_{extr}$};
+% \node[red,left] at (-1,1) {$10$};
+% %
+% \node[blue,right] at (6,2) {$2_{DR}$};
+% \node[blue,right] at (6,1) {$9$};
+% % heat transfer
+% \draw[red, decorate,decoration={snake,post length=1.5mm}, ->] (2.5,2.5)--(2.5,0.5);
+% %\draw[red,<-]  (2.5,0.5)--(2.5,0.5);
+% \node[red,left] at (2.4,2.6) {$\dot{Q}$};
+\end{tikzpicture}

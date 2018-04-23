@@ -1,0 +1,82 @@
+% This file was created by matlab2tikz.
+%
+%The latest updates can be retrieved from
+%  http://www.mathworks.com/matlabcentral/fileexchange/22022-matlab2tikz-matlab2tikz
+%where you can also make suggestions and rate matlab2tikz.
+%
+\definecolor{mycolor1}{rgb}{0.00000,0.44700,0.74100}%
+\definecolor{mycolor2}{rgb}{0.85000,0.32500,0.09800}%
+\definecolor{mycolor3}{rgb}{0.92900,0.69400,0.12500}%
+\definecolor{mycolor4}{rgb}{0.49400,0.18400,0.55600}%
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=15cm,
+height=10cm,
+scale only axis,
+xmin=0,
+xmax=23,
+xlabel style={font=\color{white!15!black}},
+xlabel={Q exchanged (kW)},
+ymin=20,
+ymax=55,
+ylabel style={font=\color{white!15!black}},
+ylabel={$\text{Temperature (}^{\circ}\text{C)}$},
+axis background/.style={fill=white},
+xmajorgrids,
+ymajorgrids,
+legend style={at={(0.34,0.715)}, anchor=south west, legend cell align=left, align=left, draw=white!15!black}
+]
+\addplot [color=mycolor1, line width=2.0pt]
+  table[row sep=crcr]{%
+0	31\\
+0.508412258594359	34\\
+20.1757557362673	34\\
+22.2828545043252	51.1661356076183\\
+};
+\addlegendentry{R134a}
+
+\addplot [color=mycolor2, line width=2.0pt]
+  table[row sep=crcr]{%
+0	21\\
+0.508412258594359	27.2227003565748\\
+};
+\addlegendentry{Sub cooling}
+
+\addplot [color=mycolor3, line width=2.0pt]
+  table[row sep=crcr]{%
+0.508412258594359	21\\
+20.1757557362673	27.5331891025716\\
+};
+\addlegendentry{Evaporation}
+
+\addplot [color=mycolor4, line width=2.0pt]
+  table[row sep=crcr]{%
+20.1757557362673	21\\
+22.2828545043252	28.5100637874208\\
+};
+\addlegendentry{Super heating}
+
+\addplot [color=black, dashed, forget plot]
+  table[row sep=crcr]{%
+0.508412258594359	20\\
+0.508412258594359	54.1661356076183\\
+};
+\addplot [color=black, dashed, forget plot]
+  table[row sep=crcr]{%
+20.1757557362673	20\\
+20.1757557362673	54.1661356076183\\
+};
+\addplot [color=black, dashed, forget plot]
+  table[row sep=crcr]{%
+22.2828545043252	20\\
+22.2828545043252	54.1661356076183\\
+};
+\addplot [color=black, dashed, forget plot]
+  table[row sep=crcr]{%
+0	21\\
+22.2828545043252	21\\
+};
+\end{axis}
+\end{tikzpicture}%

@@ -1,0 +1,169 @@
+\documentclass{standalone}
+
+%\usepackage[utf8]{inputenc}
+%\usepackage{structuralanalysis}
+\usepackage{3dstructuralanalysis}
+
+% \setlength{\paperheight}{30cm}
+% \setlength{\textheight}{24.5cm}
+% \setlength{\paperwidth}{21cm}
+% \setlength{\textwidth}{16.8cm}
+% \setlength{\oddsidemargin}{-0.3cm}
+% \setlength{\evensidemargin}{-0.3cm}
+% \setlength{\parindent}{0cm}
+% \setlength{\topmargin}{-1.9cm}
+% \setlength{\headsep}{1.3cm}
+% \setlength{\footskip}{1.5cm}
+% \usepgflibrary{fpu}%----- this
+
+\begin{document}
+
+\newdimen\XCoord
+\newdimen\YCoord
+\newcommand*{\ExtractCoordinate}[1]{\path (#1); \pgfgetlastxy{\XCoord}{\YCoord};}%
+
+\setcoords{-5}{20}[1][-1][1]
+%\setaxis{2} 
+
+\begin{tikzpicture}[coords]
+
+	\def \mm {$\,$mm};
+	
+	\def\M {{5.6188,	5.6188,	-0.63865,	-0.63865,	-0.70635,	-0.7059,	-3.932,	-3.932}};
+	
+
+	\def\Myz {{1.31705,	1.31705,	0.52955,	0.52955,	-0.25795,	-0.25795,	-1.04545,	-1.04545}};
+	
+	
+	\def \Mxy {{0.7655,	0.7655,	0,	0,	0,	0,	-0.7655,	-0.7655}};
+	
+	%scaling of M
+	\pgfmathsetmacro{\h}{4}
+	
+	\pgfmathsetmacro{\k}{1.2}
+
+	\pgfmathsetmacro{\b}{1015/1}
+	\pgfmathsetmacro{\s}{746.5/1}
+	\pgfmathsetmacro{\bs}{\b-\s}
+	\pgfmathsetmacro{\yi}{396.5/1}
+	\pgfmathsetmacro{\R}{430/1}
+	
+	\pgfmathsetmacro{\ab}{\b-\s}
+	\pgfmathsetmacro{\bc}{\b-\s+\yi}
+	\pgfmathsetmacro{\cd}{\b+\s}
+	\pgfmathsetmacro{\de}{\b-\s}
+	
+
+	%\dscaling{0.005*100};
+	
+	\dpoint{a}{0}{0}{0};
+	\dpoint{b}{0.2685*\h}{0}{0};
+	\dpoint{c}{0.665*\h}{0}{0};
+	\dpoint{d}{1.7615*\h}{0}{0};
+	\dpoint{e}{2.030*\h}{0}{0};
+	
+	\dpoint{b1}{0.2685*\h}{0}{-0.430*\h};
+	\dpoint{b2}{0.2685*\h}{0}{0};
+	
+	\dpoint{d1}{1.7615*\h}{0}{-0.430*\h}{0};
+	\dpoint{d2}{1.7615*\h}{0}{0};
+	
+	
+	%\daxis{1}{a}; 
+	
+% 	\point{a}{0}{0};
+% 	\point{b}{\bs}{0};
+% 	\point{c}{\bs+\yi}{0};
+% 	\point{d}{\b + \s}{0};
+% 	\point{e}{\b+\b}{0};
+	
+	
+	%\draw (e) circle (1);
+	
+	\dbeam{2}{b1}{b2};
+	\dbeam{2}{d1}{d2};
+	
+	\pgfmathsetmacro{\adx}{\M[0] / \k + \Myz[0] / \k}
+	\pgfmathsetmacro{\bsx}{\M[1] / \k + \Myz[1] / \k}
+	\pgfmathsetmacro{\bdx}{\M[2] / \k + \Myz[2] / \k}
+	\pgfmathsetmacro{\csx}{\M[3] / \k + \Myz[3] / \k}
+	\pgfmathsetmacro{\cdx}{\M[4] / \k + \Myz[4] / \k}
+	\pgfmathsetmacro{\dsx}{\M[5] / \k + \Myz[5] / \k}
+	\pgfmathsetmacro{\ddx}{\M[6] / \k + \Myz[6] / \k}
+	\pgfmathsetmacro{\esx}{\M[7] / \k + \Myz[7] / \k}
+	
+ 	\dinternalforces{xz}{a}{b}{\adx}{\bsx}[0][cyan];
+  	\dinternalforces{xz}{b}{c}{\bdx}{\csx}[0][cyan];
+  	\dinternalforces{xz}{c}{d}{\cdx}{\dsx}[0][cyan];
+ 	\dinternalforces{xz}{d}{e}{\ddx}{\esx}[0][cyan];
+ 	
+ 	
+% 	\pgfmathsetmacro{\adx}{\Myz[0] / \k}
+% 	\pgfmathsetmacro{\bsx}{\Myz[1] / \k}
+% 	\pgfmathsetmacro{\bdx}{\Myz[2] / \k}
+% 	\pgfmathsetmacro{\csx}{\Myz[3] / \k}
+% 	\pgfmathsetmacro{\cdx}{\Myz[4] / \k}
+% 	\pgfmathsetmacro{\dsx}{\Myz[5] / \k}
+% 	\pgfmathsetmacro{\ddx}{\Myz[6] / \k}
+% 	\pgfmathsetmacro{\esx}{\Myz[7] / \k}
+% 	
+%  	\dinternalforces{xz}{a}{b}{\adx}{\bsx}[0][brown];
+%   	\dinternalforces{xz}{b}{c}{\bdx}{\csx}[0][brown];
+%   	\dinternalforces{xz}{c}{d}{\cdx}{\dsx}[0][brown];
+%  	\dinternalforces{xz}{d}{e}{\ddx}{\esx}[0][brown];
+ 	
+	\pgfmathsetmacro{\adx}{\Mxy[0] / \k }
+	\pgfmathsetmacro{\bsx}{\Mxy[1] / \k}
+	\pgfmathsetmacro{\bdx}{\Mxy[2] / \k}
+	\pgfmathsetmacro{\csx}{\Mxy[3] / \k}
+	\pgfmathsetmacro{\cdx}{\Mxy[4] / \k}
+	\pgfmathsetmacro{\dsx}{\Mxy[5] / \k}
+	\pgfmathsetmacro{\ddx}{\Mxy[6] / \k}
+	\pgfmathsetmacro{\esx}{\Mxy[7] / \k}
+	
+ 	\dinternalforces{yx}{a}{b}{\adx}{\bsx}[0][cyan];
+  	\dinternalforces{yx}{b}{c}{\bdx}{\csx}[0][cyan];
+  	\dinternalforces{yx}{c}{d}{\cdx}{\dsx}[0][cyan];
+ 	\dinternalforces{yx}{d}{e}{\ddx}{\esx}[0][cyan];
+ 	
+	
+	\dbeam{1}{a}{b};
+	\dbeam{1}{b}{c};
+	\dbeam{1}{c}{d};
+	\dbeam{1}{d}{e};
+	
+% 	\load{1}{a}[90][1][0][$P_1$][above][cyan]
+% 	\load{1}{b}[-90][1][-1][$F_{y_1}$][above, yshift=30][cyan]
+% 	\load{1}{c}[-90][1][-1][$F_{y_2}$][above, yshift=30][cyan]
+% 	\load{1}{d}[-90][1][-1][$F_{y_3}$][above, yshift=30][cyan]
+% 	\load{1}{e}[90][1][0][$P_2$][above][cyan]
+% 	\load{1}{e}[0][1][0][$H$][left, xshift=20][cyan]
+% 	
+% 	\load{1}{b1}[180][1][0][$Y_1$][left, xshift=0][brown]
+% 	\load{1}{d1}[0][1][0][$Y_2$][left, xshift=20][brown]
+% 	
+% 	\load{1}{b1}[-90][1][0][$Q_1$][above, yshift=-20][brown]
+% 	\load{1}{d1}[-90][1][0][$Q_2$][above, yshift=-20][brown]
+	
+	
+	%\load{2}{c}[15][150]
+	%\load{1}{d}[-90]
+	%\load{1}{e}[90]
+	
+	\ddimensioning{xy}{a}{b}{2.8}[\ab];
+ 	\ddimensioning{xy}{b}{c}{2.8}[\bc \mm];
+ 	\ddimensioning{xy}{c}{d}{2.8}[\cd \mm];
+ 	\ddimensioning{xy}{d}{e}{2.8}[\de];
+ 	\ddimensioning{zx}{d1}{d}{9}[\R \mm];
+% 	
+% 	\notation{1}{a}{$0$}[left];
+% 	\notation{1}{b}{$1$}[above left];
+% 	\notation{1}{c}{$2$}[above right];
+% 	\notation{1}{d}{$3$}[above left];
+% 	\notation{1}{e}{$4$}[above left]
+	
+	%\notation{1}{a}{$P_1$}[above = 1.3];
+	
+	
+\end{tikzpicture}
+\end{document}

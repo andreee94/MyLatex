@@ -1,0 +1,59 @@
+
+\usetikzlibrary{decorations.markings}
+
+\begin{tikzpicture}[>=triangle 60]
+
+\tikzset{->-/.style={decoration={
+  markings,
+  mark=at position #1 with {\arrow{>}}},postaction={decorate}}}
+  
+\tikzset{-<-/.style={decoration={
+  markings,
+  mark=at position #1 with {\arrow{<}}},postaction={decorate}}}
+
+\begin{axis}[
+    scale only axis,
+    grid=major,
+    axis lines=middle,
+    inner axis line style={->},
+    ylabel={Temperature T ($^{\circ}C$)},
+    xlabel={Heat transfer $\dot Q \ (MW)$},
+    ytick={0,25,...,350},
+    xtick={0,15,...,100},
+    ymin=0,
+    ymax=350,
+    xmin=0,
+    xmax=100
+]
+
+% plot blue
+\addplot[-<-=.5,color=blue,thick] coordinates {
+	(0,110)
+	(96.814, 300)
+        };
+
+% plot red
+\addplot[->-=0.5,color=red,thick,] coordinates {
+	(0,25)
+	(96.814, 237.97)
+        };
+
+% dot blue
+\addplot[dotted,mark=*,blue] coordinates {
+	(0,110)
+	(96.814, 300)
+        };
+        
+% dot red
+\addplot[dotted,mark=*,red] coordinates {
+	(0,25)
+	(96.814, 237.97)
+        };
+  % vertical right
+\addplot [dashed,thick] coordinates {
+(96.814,0) (96.814,350)
+};
+\end{axis}
+\node[red,right] at (4.5,2.5) {\Large $\dot{Q}_{\text{air}}$};
+\node[blue,left] at (3.5,4.5) {\Large $\dot{Q}_{\text{flue gases}}$};
+\end{tikzpicture}
